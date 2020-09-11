@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Surcharge</title>
+</head>
+<body>
+<form method="POST" action="/testSurcharge" enctype="multipart/form-data">
+    <div>
+        <label for="monFichier">Fichier de test :</label>
+        <input type="file" id="monFichier" name="monFichier" accept="application/pdf">
+    </div>
+    <br/>
+    <div>
+        <label for="filigrane">Ajout filigrane :</label>
+        <input type="checkbox" id="filigrane" name="filigrane" value="true" checked />
+        <label for="texteFiligrane">Texte filigrane :</label>
+        <input type="text" id="texteFiligrane" name="texteFiligrane" />
+    </div>
+    <br/>
+    <div>
+        <label for="pageBlanche">Ajout page blanche si nombre de page impair :</label>
+        <input type="checkbox" id="pageBlanche" name="pageBlanche" value="true" checked />
+    </div>
+    <br/>
+    <div>
+        <button>Envoyer</button>
+    </div>
+</form>
+</body>
+</html>

@@ -9,6 +9,9 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url = uri("http://repository.aspose.com/repo/")
+    }
 }
 
 dependencies {
@@ -21,7 +24,9 @@ dependencies {
     implementation("io.quarkus:quarkus-rest-client")
     implementation("io.quarkus:quarkus-vertx")
     implementation("io.quarkus:quarkus-resteasy")
+    implementation("org.jboss.resteasy:resteasy-multipart-provider")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("com.aspose:aspose-pdf:17.10")
 
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:kotlin-extensions")
