@@ -1,6 +1,7 @@
 package fr.convergence.proddoc.service
 
 import com.aspose.pdf.*
+import com.aspose.pdf.facades.PdfFileEditor
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -66,6 +67,37 @@ class SurchargeService {
             }
         } finally {
             pdfDocument.close()
+        }
+    }
+
+    fun concatenerDocuments(fichiers: List<ByteArray>): ByteArray {
+
+        if (fichiers.size == 1) {
+            LOG.info("Il y a un seul document, on le renvoie tel quel")
+            return fichiers[0]
+        }
+
+        val listeDocuments = arrayOfNulls<Document>(fichiers.size)
+        for ((index, fichier) in fichiers.withIndex()) {
+            ByteArrayInputStream(fichier).use { byteArrayInputStream ->
+                val pdfDocument = Document(byteArrayInputStream)
+                listeDocuments[index] = pdfDocument
+            }
+        }
+
+        val pdfDocumentFinal = Document()
+        try {
+            ByteArrayOutputStream().use { dstStream ->
+                val pdfFileEditor = PdfFileEditor()
+                pdfFileEditor.concatenate(listeDocuments, pdfDocumentFinal)
+                pdfDocumentFinal.save(dstStream)
+                return dstStream.toByteArray()
+            }
+        } finally {
+            pdfDocumentFinal.close()
+            for (document in listeDocuments) {
+                document?.close()
+            }
         }
     }
 }

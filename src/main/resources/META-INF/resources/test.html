@@ -5,6 +5,7 @@
     <title>Test Surcharge</title>
 </head>
 <body>
+<h1>Surcharge d'un document</h1>
 <form method="POST" action="/testSurcharge" enctype="multipart/form-data">
     <div>
         <label for="monFichier">Fichier de test :</label>
@@ -21,6 +22,22 @@
     <div>
         <label for="pageBlanche">Ajout page blanche si nombre de page impair :</label>
         <input type="checkbox" id="pageBlanche" name="pageBlanche" value="true" checked />
+    </div>
+    <br/>
+    <div>
+        <button>Envoyer</button>
+    </div>
+</form>
+<hr/>
+<h1>Concatenation de plusieurs documents</h1>
+<form method="POST" action="/testConcatenation" enctype="multipart/form-data">
+    <div>
+        <label for="fichier1">Fichier 1 :</label>
+        <input type="file" id="fichier1" name="fichier1" accept="application/pdf">
+    </div>
+    <div>
+        <label for="fichier2">Fichier 2 :</label>
+        <input type="file" id="fichier2" name="fichier2" accept="application/pdf">
     </div>
     <br/>
     <div>

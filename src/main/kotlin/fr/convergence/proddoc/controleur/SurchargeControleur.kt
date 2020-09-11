@@ -3,7 +3,6 @@ package fr.convergence.proddoc.controleur
 import fr.convergence.proddoc.service.SurchargeService
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm
 import org.jboss.resteasy.annotations.providers.multipart.PartType
-import org.slf4j.LoggerFactory
 import java.io.InputStream
 import javax.inject.Inject
 import javax.ws.rs.*
@@ -16,7 +15,7 @@ class SurchargeControleur @Inject constructor(val surchargeService: SurchargeSer
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/pdf")
-    fun testSurcharge(@MultipartForm fichier: MultipartBody): ByteArray? {
+    fun testSurcharge(@MultipartForm fichier: MultipartBodySurcharge): ByteArray? {
 
         var result = fichier.file!!.readBytes()
 
@@ -32,7 +31,7 @@ class SurchargeControleur @Inject constructor(val surchargeService: SurchargeSer
     }
 }
 
-class MultipartBody {
+class MultipartBodySurcharge {
     @FormParam("monFichier")
     @PartType(MediaType.APPLICATION_OCTET_STREAM)
     var file: InputStream? = null
