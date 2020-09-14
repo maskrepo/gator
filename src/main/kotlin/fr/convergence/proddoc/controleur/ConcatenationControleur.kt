@@ -1,6 +1,6 @@
 package fr.convergence.proddoc.controleur
 
-import fr.convergence.proddoc.service.SurchargeService
+import fr.convergence.proddoc.service.surchargeur.aspose.AsposeSurchargeur
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm
 import org.jboss.resteasy.annotations.providers.multipart.PartType
 import java.io.InputStream
@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType
 
 
 @Path("/testConcatenation")
-class ConcatenationControleur @Inject constructor(val surchargeService: SurchargeService) {
+class ConcatenationControleur @Inject constructor(val surchargeur: AsposeSurchargeur) {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -21,7 +21,7 @@ class ConcatenationControleur @Inject constructor(val surchargeService: Surcharg
         listeFichiers.add(fichiers.file1!!.readBytes())
         listeFichiers.add(fichiers.file2!!.readBytes())
 
-        return surchargeService.concatenerDocuments(listeFichiers)
+        return surchargeur.concatenerDocuments(listeFichiers)
     }
 }
 

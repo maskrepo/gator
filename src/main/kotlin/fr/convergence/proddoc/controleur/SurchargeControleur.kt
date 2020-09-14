@@ -1,6 +1,6 @@
 package fr.convergence.proddoc.controleur
 
-import fr.convergence.proddoc.service.SurchargeService
+import fr.convergence.proddoc.service.surchargeur.aspose.AsposeSurchargeur
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm
 import org.jboss.resteasy.annotations.providers.multipart.PartType
 import java.io.InputStream
@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType
 
 
 @Path("/testSurcharge")
-class SurchargeControleur @Inject constructor(val surchargeService: SurchargeService) {
+class SurchargeControleur @Inject constructor(val surchargeur: AsposeSurchargeur) {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -19,12 +19,16 @@ class SurchargeControleur @Inject constructor(val surchargeService: SurchargeSer
 
         var result = fichier.file!!.readBytes()
 
-        if (fichier.filigrane == "true") {
-            result = surchargeService.genererFiligrane(result, fichier.texteFiligrane)
+        if (fichier.pageBlanche == "true") {
+            result = surchargeur.ajouterPageBlanche(result)
         }
 
-        if (fichier.pageBlanche == "true") {
-            result = surchargeService.ajoutPageBlancheSiNbPageImpair(result)
+        if (fichier.filigrane == "true") {
+            result = surchargeur.ajouterFiligrane(result, fichier.texteFiligrane)
+        }
+
+        if (fichier.copieConforme == "true") {
+            result = surchargeur.ajouterCopieConforme(result)
         }
 
         return result
@@ -47,4 +51,8 @@ class MultipartBodySurcharge {
     @FormParam("pageBlanche")
     @PartType(MediaType.TEXT_PLAIN)
     var pageBlanche: String? = null
+
+    @FormParam("copieConforme")
+    @PartType(MediaType.TEXT_PLAIN)
+    var copieConforme: String? = null
 }
