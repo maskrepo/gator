@@ -1,6 +1,7 @@
 package fr.convergence.proddoc.service.surchargeur.aspose
 
 import com.aspose.pdf.Document
+import com.aspose.pdf.License
 import com.aspose.pdf.Page
 import com.aspose.pdf.facades.PdfFileEditor
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
@@ -16,6 +17,11 @@ class AsposeSurchargeur (@Inject val asposeHelper: AsposeHelper): Surchargeur {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(AsposeSurchargeur::class.java)
+        private val license: License = License()
+    }
+
+    init {
+        Thread.currentThread().contextClassLoader.getResourceAsStream("Aspose.Total.Java.lic").use { inputStream ->  license.setLicense(inputStream)}
     }
 
     override fun ajouterFiligrane(fichier: ByteArray, texteFiligrane: String?): ByteArray {
