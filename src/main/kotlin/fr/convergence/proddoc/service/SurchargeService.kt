@@ -20,15 +20,13 @@ class SurchargeService (@Inject private val surchargeur: Surchargeur) {
         // Applique toutes les surcharges dans l'ordre
         for (typeSurcharge in listeSurcharge) {
             fichierSurcharge = when (typeSurcharge) {
-                TypeSurcharge.FILIGRANE_PROVISOIRE -> {
-                    surchargeur.ajouterFiligrane(fichierSurcharge, "Provisoire")
-                }
-                TypeSurcharge.RECTO_VERSO -> {
-                    surchargeur.ajouterPageBlanche(fichierSurcharge)
-                }
-                TypeSurcharge.COPIE_CERTIFIEE_CONFORME -> {
-                    surchargeur.ajouterCopieConforme(fichierSurcharge)
-                }
+                TypeSurcharge.FILIGRANE_PROVISOIRE -> surchargeur.ajouterFiligrane(fichierSurcharge, "Provisoire")
+
+                TypeSurcharge.RECTO_VERSO -> surchargeur.ajouterPageBlanche(fichierSurcharge)
+
+                TypeSurcharge.COPIE_CERTIFIEE_CONFORME -> surchargeur.ajouterCopieConforme(fichierSurcharge)
+
+                TypeSurcharge.PAGINATION -> surchargeur.ajouterPagination(fichierSurcharge)
             }
         }
 

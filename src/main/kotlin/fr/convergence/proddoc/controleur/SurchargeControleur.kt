@@ -31,6 +31,10 @@ class SurchargeControleur @Inject constructor(val surchargeur: AsposeSurchargeur
             result = surchargeur.ajouterCopieConforme(result)
         }
 
+        if (fichier.pagination == "true") {
+            result = surchargeur.ajouterPagination(result)
+        }
+
         return result
     }
 }
@@ -55,4 +59,8 @@ class MultipartBodySurcharge {
     @FormParam("copieConforme")
     @PartType(MediaType.TEXT_PLAIN)
     var copieConforme: String? = null
+
+    @FormParam("pagination")
+    @PartType(MediaType.TEXT_PLAIN)
+    var pagination: String? = null
 }

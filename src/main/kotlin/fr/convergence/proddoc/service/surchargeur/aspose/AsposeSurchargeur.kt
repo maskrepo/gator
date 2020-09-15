@@ -1,11 +1,13 @@
 package fr.convergence.proddoc.service.surchargeur.aspose
 
 import com.aspose.pdf.Document
+import com.aspose.pdf.Page
 import com.aspose.pdf.facades.PdfFileEditor
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.util.function.Consumer
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
@@ -26,6 +28,26 @@ class AsposeSurchargeur (@Inject val asposeHelper: AsposeHelper): Surchargeur {
         LOG.info("Ajout copie conforme")
         val stampCopieConforme = asposeHelper.genererStampPourCopieConforme()
         return asposeHelper.ajouterStampSurToutesLesPages(fichier, stampCopieConforme)
+    }
+
+    override fun ajouterPagination(fichier: ByteArray): ByteArray {
+        LOG.info("Ajout pagination")
+        val stampCopieConforme = asposeHelper.genererStampPourPagination()
+
+        val document = Document(ByteArrayInputStream(fichier))
+        try {
+            document.pages.forEach(Consumer { page: Page ->
+                stampCopieConforme.value = "Page ${page.number} sur ${document.pages.size()}"
+                page.addStamp(stampCopieConforme)
+            })
+
+            ByteArrayOutputStream().use { byteArrayOutputStream ->
+                document.save(byteArrayOutputStream)
+                return byteArrayOutputStream.toByteArray()
+            }
+        } finally {
+            document.close()
+        }
     }
 
     override fun ajouterPageBlanche(fichier: ByteArray): ByteArray {
