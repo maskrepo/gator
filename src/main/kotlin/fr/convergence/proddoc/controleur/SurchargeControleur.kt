@@ -1,5 +1,7 @@
 package fr.convergence.proddoc.controleur
 
+import fr.convergence.proddoc.model.ConfigurationFiligrane
+import fr.convergence.proddoc.model.ConfigurationPagination
 import fr.convergence.proddoc.service.surchargeur.aspose.AsposeSurchargeur
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm
 import org.jboss.resteasy.annotations.providers.multipart.PartType
@@ -24,7 +26,8 @@ class SurchargeControleur @Inject constructor(val surchargeur: AsposeSurchargeur
         }
 
         if (fichier.filigrane == "true") {
-            result = surchargeur.ajouterFiligrane(result, fichier.texteFiligrane)
+            val filigrane = ConfigurationFiligrane(fichier.texteFiligrane!!)
+            result = surchargeur.ajouterFiligrane(result, filigrane)
         }
 
         if (fichier.copieConforme == "true") {
@@ -32,7 +35,8 @@ class SurchargeControleur @Inject constructor(val surchargeur: AsposeSurchargeur
         }
 
         if (fichier.pagination == "true") {
-            result = surchargeur.ajouterPagination(result)
+            val pagination = ConfigurationPagination()
+            result = surchargeur.ajouterPagination(result, pagination)
         }
 
         return result

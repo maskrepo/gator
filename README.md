@@ -1,35 +1,45 @@
-# gator project
+# Surcharge de document
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Service de surcharge d'un document
+Pour l'instant prend en compte :
+- Ajout d'un filigrane
+- Ajout d'une page blanche si le nombre de page est impair
+- Ajout de la pagination
+- Ajout de la mention "copie conforme"
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+## Tester l'application en local
 
-## Running the application in dev mode
+http://localhost:8081/test.html
 
-You can run your application in dev mode that enables live coding using:
+## Application réactive
+
+Topic en entrée : SURCHARGE_DEMANDE
+
+Topic de sortie : SURCHARGE_REPONSE 
+
+Exemple de message de type demande 
 ```
-./gradlew quarkusDev
+{
+  "entete": {
+    "idUnique": "659039e688c23ff08b4f905be07294ab66d600d4",
+    "idLot": "12345",
+    "dateHeureDemande": "2020-09-23T09:00:00",
+    "idEmetteur": "L20019",
+    "idGreffe": "0605",
+    "typeDemande": "SURCHARGE"
+  },
+  "objetMetier": {
+    "urlDocument": "http://127.0.0.1:8080/kbis/pdfnumgestion/2012B00025",
+    "filigrane": {
+      "texte": "Provisoire"
+    },
+    "pagination": {},
+    "ajoutPageBlanche": true
+  },
+  "reponse": {
+    "estReponseOk": false,
+    "messageErreur": "noerror",
+    "stackTrace": "nostracktrace"
+  }
+}
 ```
-
-## Packaging and running the application
-
-The application can be packaged using `./gradlew quarkusBuild`.
-It produces the `gator-1.0.0-SNAPSHOT-runner.jar` file in the `build` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/lib` directory.
-
-The application is now runnable using `java -jar build/gator-1.0.0-SNAPSHOT-runner.jar`.
-
-If you want to build an _über-jar_, just add the `--uber-jar` option to the command line:
-```
-./gradlew quarkusBuild --uber-jar
-```
-
-## Creating a native executable
-
-You can create a native executable using: `./gradlew build -Dquarkus.package.type=native`.
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true`.
-
-You can then execute your native executable with: `./build/gator-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling#building-a-native-executable.
