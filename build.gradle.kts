@@ -35,7 +35,9 @@ dependencies {
     implementation("io.quarkus:quarkus-vertx:$quarkusVersion")
     implementation("io.quarkus:quarkus-resteasy:$quarkusVersion")
     implementation("org.jboss.resteasy:resteasy-multipart-provider:4.5.6.Final")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
     implementation("com.aspose:aspose-pdf:17.10")
 

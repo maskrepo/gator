@@ -4,6 +4,8 @@ import fr.convergence.proddoc.model.DemandeSurcharge
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
 import fr.convergence.proddoc.service.SurchargeService
 import fr.convergence.proddoc.util.maskIOHandler
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.eclipse.microprofile.reactive.messaging.Outgoing
 import org.slf4j.LoggerFactory
@@ -23,17 +25,19 @@ class SurchargeReactive (@Inject val surchargeService: SurchargeService) {
     fun consume(message: MaskMessage): MaskMessage = maskIOHandler(message) {
 
         LOG.info("Demande de surcharge")
+        GlobalScope.async {
 
-        val demandeSurcharge = message.recupererObjetMetier<DemandeSurcharge>()
-        LOG.info("La demande est $demandeSurcharge")
+            val demandeSurcharge = message.recupererObjetMetier<DemandeSurcharge>()
+            LOG.info("La demande est $demandeSurcharge")
 
-        val documentModifie = surchargeService.appliquerSurcharge(demandeSurcharge)
+            val documentModifie = surchargeService.appliquerSurcharge(demandeSurcharge)
 
-        val fichierTemp = createTempFile(suffix = ".pdf", directory = File("c:\\TEMP\\"))
-        fichierTemp.writeBytes(documentModifie)
+            val fichierTemp = createTempFile(suffix = ".pdf", directory = File("c:\\TEMP\\"))
+            fichierTemp.writeBytes(documentModifie)
 
-        LOG.info(fichierTemp.path)
+            LOG.info(fichierTemp.path)
 
-        "OK"
+            "OK"
+        }
     }
 }
