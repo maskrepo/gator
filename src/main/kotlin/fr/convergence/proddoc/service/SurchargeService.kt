@@ -1,6 +1,6 @@
 package fr.convergence.proddoc.service
 
-import fr.convergence.proddoc.model.DemandeSurcharge
+import fr.convergence.proddoc.model.SurchargeDemande
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
 import org.slf4j.LoggerFactory
 import java.net.URL
@@ -14,7 +14,7 @@ class SurchargeService (@Inject private val surchargeur: Surchargeur) {
         private val LOG = LoggerFactory.getLogger(SurchargeService::class.java)
     }
 
-    fun appliquerSurcharge(demande: DemandeSurcharge): ByteArray {
+    fun appliquerSurcharge(demande: SurchargeDemande): ByteArray {
 
         val u = URL(demande.urlDocument)
         var fichierSurcharge: ByteArray
