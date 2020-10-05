@@ -32,27 +32,25 @@ class SurchargeReactive(
 
         LOG.info("Demande de surcharge")
 
-        var messageRetour: MaskMessage = messageOrigine
-
         GlobalScope.launch {
-            try {
-                val demandeSurcharge = messageOrigine.recupererObjetMetier<SurchargeDemande>()
+            retour(
+                try {
+                    val demandeSurcharge = messageOrigine.recupererObjetMetier<SurchargeDemande>()
 
-                LOG.info("La demande est $demandeSurcharge")
+                    LOG.info("La demande est $demandeSurcharge")
 
-                val documentModifie = surchargeService.appliquerSurcharge(demandeSurcharge)
+                    val documentModifie = surchargeService.appliquerSurcharge(demandeSurcharge)
 
-                val fichierTemp = createTempFile(suffix = ".pdf", directory = File("c:\\TEMP\\"))
-                fichierTemp.writeBytes(documentModifie)
+                    val fichierTemp = createTempFile(suffix = ".pdf", directory = File("c:\\TEMP\\"))
+                    fichierTemp.writeBytes(documentModifie)
 
-                LOG.info(fichierTemp.path)
-                messageRetour = MaskMessage.reponseOk(SurchargeReponse(fichierTemp.path), messageOrigine)
+                    LOG.info(fichierTemp.path)
+                    MaskMessage.reponseOk(SurchargeReponse(fichierTemp.path), messageOrigine)
 
-            } catch (ex: Exception) {
-                messageRetour = MaskMessage.reponseKo<Exception>(ex, messageOrigine)
-            } finally {
-                retour(messageRetour)
-            }
+                } catch (ex: Exception) {
+                    MaskMessage.reponseKo<Exception>(ex, messageOrigine)
+                }
+            )
         }
 
     }
