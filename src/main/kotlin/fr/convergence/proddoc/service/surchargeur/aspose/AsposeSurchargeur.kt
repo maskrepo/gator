@@ -4,6 +4,8 @@ import com.aspose.pdf.Document
 import com.aspose.pdf.License
 import com.aspose.pdf.Page
 import com.aspose.pdf.facades.PdfFileEditor
+import fr.convergence.proddoc.model.ConfigurationFiligrane
+import fr.convergence.proddoc.model.ConfigurationPagination
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
@@ -24,9 +26,9 @@ class AsposeSurchargeur (@Inject val asposeHelper: AsposeHelper): Surchargeur {
         Thread.currentThread().contextClassLoader.getResourceAsStream("Aspose.Total.Java.lic").use { inputStream ->  license.setLicense(inputStream)}
     }
 
-    override fun ajouterFiligrane(fichier: ByteArray, texteFiligrane: String?): ByteArray {
-        LOG.info("Ajout en filigrane du texte $texteFiligrane")
-        val stampFiligrane = asposeHelper.genererStampPourFiligrane(texteFiligrane)
+    override fun ajouterFiligrane(fichier: ByteArray, filigrane: ConfigurationFiligrane): ByteArray {
+        LOG.info("Ajout d'un filigrane $filigrane")
+        val stampFiligrane = asposeHelper.genererStampPourFiligrane(filigrane)
         return asposeHelper.ajouterStampSurToutesLesPages(fichier, stampFiligrane)
     }
 
@@ -36,9 +38,9 @@ class AsposeSurchargeur (@Inject val asposeHelper: AsposeHelper): Surchargeur {
         return asposeHelper.ajouterStampSurToutesLesPages(fichier, stampCopieConforme)
     }
 
-    override fun ajouterPagination(fichier: ByteArray): ByteArray {
+    override fun ajouterPagination(fichier: ByteArray, pagination: ConfigurationPagination): ByteArray {
         LOG.info("Ajout pagination")
-        val stampCopieConforme = asposeHelper.genererStampPourPagination()
+        val stampCopieConforme = asposeHelper.genererStampPourPagination(pagination)
 
         val document = Document(ByteArrayInputStream(fichier))
         try {

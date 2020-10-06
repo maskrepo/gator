@@ -1,8 +1,9 @@
 package fr.convergence.proddoc.service
 
-import fr.convergence.proddoc.model.TypeSurcharge
+import fr.convergence.proddoc.model.SurchargeDemande
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
 import org.slf4j.LoggerFactory
+import java.net.URL
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
@@ -13,22 +14,25 @@ class SurchargeService (@Inject private val surchargeur: Surchargeur) {
         private val LOG = LoggerFactory.getLogger(SurchargeService::class.java)
     }
 
-    fun appliquerSurcharge(fichierOrigine: ByteArray, listeSurcharge: List<TypeSurcharge>): ByteArray {
+    fun appliquerSurcharge(demande: SurchargeDemande): ByteArray {
 
-        var fichierSurcharge = fichierOrigine
+        val u = URL(demande.urlDocument)
+        var fichierSurcharge: ByteArray
 
-        // Applique toutes les surcharges dans l'ordre
-        for (typeSurcharge in listeSurcharge) {
-            fichierSurcharge = when (typeSurcharge) {
-                TypeSurcharge.FILIGRANE_PROVISOIRE -> surchargeur.ajouterFiligrane(fichierSurcharge, "Provisoire")
+        u.openStream().use { inputStream -> fichierSurcharge = inputStream.readBytes() }
 
-                TypeSurcharge.RECTO_VERSO -> surchargeur.ajouterPageBlanche(fichierSurcharge)
-
-                TypeSurcharge.COPIE_CERTIFIEE_CONFORME -> surchargeur.ajouterCopieConforme(fichierSurcharge)
-
-                TypeSurcharge.PAGINATION -> surchargeur.ajouterPagination(fichierSurcharge)
-            }
+        if (demande.filigrane != null) {
+            fichierSurcharge = surchargeur.ajouterFiligrane(fichierSurcharge, demande.filigrane)
         }
+
+        if (demande.pagination != null) {
+            fichierSurcharge = surchargeur.ajouterPagination(fichierSurcharge, demande.pagination)
+        }
+
+        if (demande.ajoutPageBlanche) {
+            fichierSurcharge = surchargeur.ajouterPageBlanche(fichierSurcharge)
+        }
+
 
         // Retourne le fichier modifié
         return fichierSurcharge
