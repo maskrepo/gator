@@ -6,16 +6,18 @@ import com.aspose.pdf.Page
 import com.aspose.pdf.facades.PdfFileEditor
 import fr.convergence.proddoc.model.ConfigurationFiligrane
 import fr.convergence.proddoc.model.ConfigurationPagination
+import fr.convergence.proddoc.model.SurchargeDemande
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.util.function.Consumer
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @ApplicationScoped
-class AsposeSurchargeur (@Inject val asposeHelper: AsposeHelper): Surchargeur {
+class AsposeSurchargeur(@Inject val asposeHelper: AsposeHelper) : Surchargeur {
 
     companion object {
         private val LOG = LoggerFactory.getLogger(AsposeSurchargeur::class.java)
@@ -23,66 +25,69 @@ class AsposeSurchargeur (@Inject val asposeHelper: AsposeHelper): Surchargeur {
     }
 
     init {
-        Thread.currentThread().contextClassLoader.getResourceAsStream("Aspose.Total.Java.lic").use { inputStream ->  license.setLicense(inputStream)}
+        Thread.currentThread().contextClassLoader.getResourceAsStream("Aspose.Total.Java.lic")
+            .use { inputStream -> license.setLicense(inputStream) }
     }
 
-    override fun ajouterFiligrane(fichier: ByteArray, filigrane: ConfigurationFiligrane): ByteArray {
-        LOG.info("Ajout d'un filigrane $filigrane")
-        val stampFiligrane = asposeHelper.genererStampPourFiligrane(filigrane)
-        return asposeHelper.ajouterStampSurToutesLesPages(fichier, stampFiligrane)
-    }
+    override fun appliquerSurcharge(fichierInputStream: InputStream, surchargeDemande: SurchargeDemande): ByteArrayOutputStream {
 
-    override fun ajouterCopieConforme(fichier: ByteArray): ByteArray {
-        LOG.info("Ajout copie conforme")
-        val stampCopieConforme = asposeHelper.genererStampPourCopieConforme()
-        return asposeHelper.ajouterStampSurToutesLesPages(fichier, stampCopieConforme)
-    }
+        val document = Document(fichierInputStream)
 
-    override fun ajouterPagination(fichier: ByteArray, pagination: ConfigurationPagination): ByteArray {
-        LOG.info("Ajout pagination")
-        val stampCopieConforme = asposeHelper.genererStampPourPagination(pagination)
-
-        val document = Document(ByteArrayInputStream(fichier))
         try {
-            document.pages.forEach(Consumer { page: Page ->
-                stampCopieConforme.value = "Page ${page.number} sur ${document.pages.size()}"
-                page.addStamp(stampCopieConforme)
-            })
+            if (surchargeDemande.filigrane != null) {
+                this.ajouterFiligrane(document, surchargeDemande.filigrane)
+            }
+
+            if (surchargeDemande.pagination != null) {
+                this.ajouterPagination(document, surchargeDemande.pagination)
+            }
+
+            if (surchargeDemande.ajoutPageBlanche) {
+                this.ajouterPageBlanche(document)
+            }
 
             ByteArrayOutputStream().use { byteArrayOutputStream ->
                 document.save(byteArrayOutputStream)
-                return byteArrayOutputStream.toByteArray()
+                return byteArrayOutputStream
             }
         } finally {
             document.close()
         }
     }
 
-    override fun ajouterPageBlanche(fichier: ByteArray): ByteArray {
+    fun ajouterFiligrane(document: Document, filigrane: ConfigurationFiligrane) {
+        LOG.info("Ajout d'un filigrane $filigrane")
+        val stampFiligrane = asposeHelper.genererStampPourFiligrane(filigrane)
+        return asposeHelper.ajouterStampSurToutesLesPages(document, stampFiligrane)
+    }
 
-        var pdfDocument = Document()
-        try {
-            ByteArrayOutputStream().use { dstStream ->
-                ByteArrayInputStream(fichier).use { byteArrayInputStream ->
-                    pdfDocument = Document(byteArrayInputStream)
-                    pdfDocument.decrypt()
-                    pdfDocument.allowReusePageContent = true
-                    return if (pdfDocument.pages.size() % 2 == 0) {
-                        LOG.info("Le document a un nombre pair de page, on ne fait rien")
-                        pdfDocument.save(dstStream)
-                        dstStream.toByteArray()
-                    } else {
-                        LOG.info("Le document a un nombre impair de page, on ajoute une page blanche")
-                        pdfDocument.pages.add()
-                        pdfDocument.save(dstStream)
-                        dstStream.toByteArray()
-                    }
-                }
-            }
-        } finally {
-            pdfDocument.close()
+    fun ajouterCopieConforme(document: Document) {
+        LOG.info("Ajout copie conforme")
+        val stampCopieConforme = asposeHelper.genererStampPourCopieConforme()
+        return asposeHelper.ajouterStampSurToutesLesPages(document, stampCopieConforme)
+    }
+
+    fun ajouterPagination(document: Document, pagination: ConfigurationPagination) {
+        LOG.info("Ajout pagination")
+        val stampCopieConforme = asposeHelper.genererStampPourPagination(pagination)
+        document.pages.forEach(Consumer { page: Page ->
+            stampCopieConforme.value = "Page ${page.number} sur ${document.pages.size()}"
+            page.addStamp(stampCopieConforme)
+        })
+    }
+
+    fun ajouterPageBlanche(document: Document) {
+
+        document.decrypt()
+        document.allowReusePageContent = true
+        if (document.pages.size() % 2 == 0) {
+            LOG.info("Le document a un nombre pair de page, on ne fait rien")
+        } else {
+            LOG.info("Le document a un nombre impair de page, on ajoute une page blanche")
+            document.pages.add()
         }
     }
+
 
     fun concatenerDocuments(fichiers: List<ByteArray>): ByteArray {
 

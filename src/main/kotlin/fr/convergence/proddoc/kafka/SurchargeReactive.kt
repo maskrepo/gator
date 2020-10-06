@@ -42,7 +42,7 @@ class SurchargeReactive(
                     val documentModifie = surchargeService.appliquerSurcharge(demandeSurcharge)
 
                     val fichierTemp = createTempFile(suffix = ".pdf", directory = File("c:\\TEMP\\"))
-                    fichierTemp.writeBytes(documentModifie)
+                    fichierTemp.writeBytes(documentModifie.toByteArray())
 
                     LOG.info(fichierTemp.path)
                     MaskMessage.reponseOk(SurchargeReponse(fichierTemp.path), messageOrigine)
