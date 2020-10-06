@@ -5,8 +5,6 @@ import fr.convergence.proddoc.model.ConfigurationFiligrane
 import fr.convergence.proddoc.model.ConfigurationPagination
 import fr.convergence.proddoc.service.SurchargeService
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.util.function.Consumer
 import javax.enterprise.context.ApplicationScoped
 
@@ -17,21 +15,12 @@ class AsposeHelper {
         private val LOG = LoggerFactory.getLogger(SurchargeService::class.java)
     }
 
-    fun ajouterStampSurToutesLesPages(fichier: ByteArray, stamp: Stamp): ByteArray {
-        val document = Document(ByteArrayInputStream(fichier))
-        LOG.info("Nombre de pages du document ${document.pages.size()}")
-        try {
-            document.pages.forEach(Consumer { page: Page ->
-                page.addStamp(stamp)
-            })
+    fun ajouterStampSurToutesLesPages(document: Document, stamp: Stamp) {
 
-            ByteArrayOutputStream().use { byteArrayOutputStream ->
-                document.save(byteArrayOutputStream)
-                return byteArrayOutputStream.toByteArray()
-            }
-        } finally {
-            document.close()
-        }
+        LOG.info("Nombre de pages du document ${document.pages.size()}")
+        document.pages.forEach(Consumer { page: Page ->
+            page.addStamp(stamp)
+        })
     }
 
     fun genererStampPourCopieConforme(): TextStamp {
@@ -51,7 +40,8 @@ class AsposeHelper {
         texteStamp.rotateAngle = filigrane.rotateAngle
         texteStamp.textState.font = FontRepository.findFont(filigrane.font)
         texteStamp.textState.fontSize = filigrane.fontSize
-        texteStamp.textState.foregroundColor = Color.fromArgb(filigrane.foregroundColorR, filigrane.foregroundColorG, filigrane.foregroundColorB)
+        texteStamp.textState.foregroundColor =
+            Color.fromArgb(filigrane.foregroundColorR, filigrane.foregroundColorG, filigrane.foregroundColorB)
 
         if (filigrane.fontStyleBold) {
             texteStamp.textState.setFontStyle(FontStyles.Bold)
@@ -68,7 +58,8 @@ class AsposeHelper {
         val texteStamp = TextStamp("")
         texteStamp.xIndent = pagination.xIndent
         texteStamp.yIndent = pagination.yIndent
-        texteStamp.textState.foregroundColor = Color.fromArgb(pagination.foregroundColorR, pagination.foregroundColorG, pagination.foregroundColorB)
+        texteStamp.textState.foregroundColor =
+            Color.fromArgb(pagination.foregroundColorR, pagination.foregroundColorG, pagination.foregroundColorB)
         texteStamp.textState.font = FontRepository.findFont(pagination.font)
         texteStamp.textState.fontSize = pagination.fontSize
         return texteStamp
