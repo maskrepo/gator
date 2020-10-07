@@ -45,10 +45,10 @@ class SurchargeReactive(
                     fichierTemp.writeBytes(documentModifie)
 
                     LOG.info(fichierTemp.path)
-                    MaskMessage.reponseOk(SurchargeReponse(fichierTemp.path), messageOrigine)
+                    MaskMessage.reponseOk(SurchargeReponse(fichierTemp.path), messageOrigine, messageOrigine.entete.idReference)
 
                 } catch (ex: Exception) {
-                    MaskMessage.reponseKo<Exception>(ex, messageOrigine)
+                    MaskMessage.reponseKo<Exception>(ex, messageOrigine, messageOrigine.entete.idReference)
                 }
             )
         }
