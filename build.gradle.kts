@@ -7,6 +7,8 @@ plugins {
     kotlin("plugin.serialization") version "1.4.10"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.4.10"
     id("io.quarkus") version "1.8.0.Final"
+    id ("org.sonarqube") version "2.7"
+    id ("jacoco")
     `maven-publish`
 }
 
