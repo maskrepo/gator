@@ -22,9 +22,6 @@ class AsposeSurchargeur (@Inject val asposeHelper: AsposeHelper): Surchargeur {
         private val license: License = License()
     }
 
-    init {
-        Thread.currentThread().contextClassLoader.getResourceAsStream("Aspose.Total.Java.lic").use { inputStream ->  license.setLicense(inputStream)}
-    }
 
     override fun ajouterFiligrane(fichier: ByteArray, filigrane: ConfigurationFiligrane): ByteArray {
         LOG.info("Ajout d'un filigrane $filigrane")

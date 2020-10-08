@@ -42,19 +42,18 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>("outlaw") {
+        create<MavenPublication>("gator") {
             from(components["java"])
         }
     }
 }
 
 dependencies {
-    implementation("io.quarkus:quarkus-config-yaml:$quarkusVersion")
-    implementation("io.quarkus:quarkus-smallrye-reactive-messaging:$quarkusVersion")
     implementation("io.quarkus:quarkus-smallrye-reactive-messaging-kafka:$quarkusVersion")
     implementation("io.quarkus:quarkus-rest-client:$quarkusVersion")
     implementation("io.quarkus:quarkus-vertx:$quarkusVersion")
     implementation("io.quarkus:quarkus-resteasy:$quarkusVersion")
+
     implementation("org.jboss.resteasy:resteasy-multipart-provider:4.5.6.Final")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
@@ -72,9 +71,6 @@ dependencies {
 group = "fr.convergence.proddoc"
 version = "1.0.0-SNAPSHOT"
 
-quarkus {
-    setOutputDirectory("$projectDir/build/classes/kotlin/main")
-}
 
 allOpen {
     annotation("javax.ws.rs.Path")
@@ -82,19 +78,11 @@ allOpen {
     annotation("io.quarkus.test.junit.QuarkusTest")
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
 
 tasks {
-    quarkusDev {
-        setSourceDir("$projectDir/src/main/kotlin")
-    }
 
     compileKotlin {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_11.toString()
-        kotlinOptions.javaParameters = true
     }
 
     compileTestKotlin {

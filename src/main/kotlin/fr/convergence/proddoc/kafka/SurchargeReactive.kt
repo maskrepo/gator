@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @ApplicationScoped
 class SurchargeReactive(
-    @Inject val surchargeService: SurchargeService
+    @Inject var surchargeService: SurchargeService
 ) {
 
     @Inject
