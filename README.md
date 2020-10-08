@@ -25,6 +25,7 @@ Exemple de message de type demande
     "idLot": "12345",
     "dateHeureDemande": "2020-09-23T09:00:00",
     "idEmetteur": "L20019",
+    "idReference": "reference",
     "idGreffe": "0605",
     "typeDemande": "SURCHARGE"
   },

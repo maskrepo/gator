@@ -25,7 +25,7 @@ class AsposeSurchargeur(@Inject val asposeHelper: AsposeHelper) : Surchargeur {
     }
 
     init {
-        Thread.currentThread().contextClassLoader.getResourceAsStream("Aspose.Total.Java.lic")
+        Thread.currentThread().contextClassLoader.getResourceAsStream("META-INF/resources/Aspose.Total.Java.lic")
             .use { inputStream -> license.setLicense(inputStream) }
     }
 
