@@ -1,11 +1,9 @@
 package fr.convergence.proddoc.service.surchargeur
 
-import fr.convergence.proddoc.model.ConfigurationFiligrane
-import fr.convergence.proddoc.model.ConfigurationPagination
+import fr.convergence.proddoc.model.SurchargeDemande
+import org.apache.commons.io.output.ByteArrayOutputStream
+import java.io.InputStream
 
 interface Surchargeur {
-    fun ajouterFiligrane(fichier: ByteArray, filigrane: ConfigurationFiligrane): ByteArray
-    fun ajouterPageBlanche(fichier: ByteArray): ByteArray
-    fun ajouterCopieConforme(fichier: ByteArray): ByteArray
-    fun ajouterPagination(fichier: ByteArray, pagination: ConfigurationPagination): ByteArray
+    fun appliquerSurcharge(fichierInputStream: InputStream, surchargeDemande: SurchargeDemande): ByteArrayOutputStream
 }

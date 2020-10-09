@@ -1,12 +1,15 @@
 val quarkusVersion: String = "1.8.0.Final"
-val maskModelVersion = "1.0.3-SNAPSHOT"
-val maskUtilVersion = "1.0.3-SNAPSHOT"
+val maskModelVersion = "1.1.3-SNAPSHOT"
+val maskUtilVersion = "1.1.1-SNAPSHOT"
+val stingerUtilVersion = "1.1.1-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.4.10"
     kotlin("plugin.serialization") version "1.4.10"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.4.10"
     id("io.quarkus") version "1.8.0.Final"
+    id ("org.sonarqube") version "2.7"
+    id ("jacoco")
     `maven-publish`
 }
 
@@ -55,7 +58,6 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy:$quarkusVersion")
 
     implementation("org.jboss.resteasy:resteasy-multipart-provider:4.5.6.Final")
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
@@ -63,6 +65,7 @@ dependencies {
 
     implementation("fr.convergence.proddoc.lib:mask-util:$maskUtilVersion")
     implementation("fr.convergence.proddoc.lib:mask-model:$maskModelVersion")
+    implementation("fr.convergence.proddoc.lib:stinger-util:$stingerUtilVersion")
 
     testImplementation("io.quarkus:quarkus-junit5:$quarkusVersion")
     testImplementation("io.rest-assured:kotlin-extensions:4.3.0")
@@ -90,5 +93,11 @@ tasks {
     }
     test {
         systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
+    }
+}
+
+tasks.register("printVersion") {
+    doLast {
+        File(projectDir, "version.txt").appendText("${project.version}")
     }
 }

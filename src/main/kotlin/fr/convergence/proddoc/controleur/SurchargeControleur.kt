@@ -1,10 +1,12 @@
 package fr.convergence.proddoc.controleur
 
+import com.aspose.pdf.Document
 import fr.convergence.proddoc.model.ConfigurationFiligrane
 import fr.convergence.proddoc.model.ConfigurationPagination
 import fr.convergence.proddoc.service.surchargeur.aspose.AsposeSurchargeur
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm
 import org.jboss.resteasy.annotations.providers.multipart.PartType
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import javax.inject.Inject
 import javax.ws.rs.*
@@ -19,27 +21,35 @@ class SurchargeControleur @Inject constructor(val surchargeur: AsposeSurchargeur
     @Produces("application/pdf")
     fun testSurcharge(@MultipartForm fichier: MultipartBodySurcharge): ByteArray? {
 
-        var result = fichier.file!!.readBytes()
+        val document = Document(fichier.file)
 
-        if (fichier.pageBlanche == "true") {
-            result = surchargeur.ajouterPageBlanche(result)
+        try {
+            if (fichier.pageBlanche == "true") {
+                surchargeur.ajouterPageBlanche(document)
+            }
+
+            if (fichier.filigrane == "true") {
+                val filigrane = ConfigurationFiligrane(fichier.texteFiligrane!!)
+                surchargeur.ajouterFiligrane(document, filigrane)
+            }
+
+            if (fichier.copieConforme == "true") {
+                surchargeur.ajouterCopieConforme(document)
+            }
+
+            if (fichier.pagination == "true") {
+                val pagination = ConfigurationPagination()
+                surchargeur.ajouterPagination(document, pagination)
+            }
+
+            ByteArrayOutputStream().use { byteArrayOutputStream ->
+                document.save(byteArrayOutputStream)
+                return byteArrayOutputStream.toByteArray()
+            }
+
+        } finally {
+            document.close()
         }
-
-        if (fichier.filigrane == "true") {
-            val filigrane = ConfigurationFiligrane(fichier.texteFiligrane!!)
-            result = surchargeur.ajouterFiligrane(result, filigrane)
-        }
-
-        if (fichier.copieConforme == "true") {
-            result = surchargeur.ajouterCopieConforme(result)
-        }
-
-        if (fichier.pagination == "true") {
-            val pagination = ConfigurationPagination()
-            result = surchargeur.ajouterPagination(result, pagination)
-        }
-
-        return result
     }
 }
 

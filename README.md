@@ -9,7 +9,7 @@ Pour l'instant prend en compte :
 
 ## Tester l'application en local
 
-http://localhost:8081/test.html
+http://localhost:8093/test.html
 
 ## Application réactive
 
@@ -25,19 +25,20 @@ Exemple de message de type demande
     "idLot": "12345",
     "dateHeureDemande": "2020-09-23T09:00:00",
     "idEmetteur": "L20019",
+    "idReference": "reference2",
     "idGreffe": "0605",
     "typeDemande": "SURCHARGE"
   },
   "objetMetier": {
-    "urlDocument": "http://127.0.0.1:8080/kbis/pdfnumgestion/2012B00025",
+    "urlDocument": "http://192.168.1.30:8100/convergence-greffe-web/rest/kbis/recupererPdf",
     "filigrane": {
       "texte": "Provisoire"
     },
-    "pagination": {},
-    "ajoutPageBlanche": true
+    "ajoutPageBlanche": true,
+    "pagination": {}
   },
   "reponse": {
-    "estReponseOk": false,
+    "estReponseOk": true,
     "messageErreur": "noerror",
     "stackTrace": "nostracktrace"
   }
