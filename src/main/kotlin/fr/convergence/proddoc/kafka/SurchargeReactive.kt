@@ -3,20 +3,21 @@ package fr.convergence.proddoc.kafka
 import fr.convergence.proddoc.model.SurchargeDemande
 import fr.convergence.proddoc.model.SurchargeReponse
 import fr.convergence.proddoc.model.lib.obj.MaskMessage
+import fr.convergence.proddoc.model.metier.FichierStocke
 import fr.convergence.proddoc.service.SurchargeService
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import fr.convergence.proddoc.util.stinger.StingerUtil
 import org.eclipse.microprofile.reactive.messaging.Channel
 import org.eclipse.microprofile.reactive.messaging.Emitter
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.slf4j.LoggerFactory
-import java.io.File
+import java.io.InputStream
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
 
 @ApplicationScoped
 class SurchargeReactive(
-    @Inject var surchargeService: SurchargeService
+    @Inject var surchargeService: SurchargeService,
+    @Inject val stingerUtil: StingerUtil
 ) {
 
     @Inject
@@ -32,33 +33,35 @@ class SurchargeReactive(
 
         LOG.info("Demande de surcharge")
 
-        GlobalScope.launch {
-            retour(
-                try {
-                    val demandeSurcharge = messageOrigine.recupererObjetMetier<SurchargeDemande>()
+        val demandeSurcharge = messageOrigine.recupererObjetMetier<SurchargeDemande>()
+        LOG.info("La demande est $demandeSurcharge")
 
-                    LOG.info("La demande est $demandeSurcharge")
-
-                    val documentModifie = surchargeService.appliquerSurcharge(demandeSurcharge)
-
-                    val fichierTemp = createTempFile(suffix = ".pdf", directory = File("c:\\TEMP\\"))
-                    fichierTemp.writeBytes(documentModifie.toByteArray())
-
-                    LOG.info(fichierTemp.path)
-                    MaskMessage.reponseOk(SurchargeReponse(fichierTemp.path), messageOrigine, messageOrigine.entete.idReference)
-
-                } catch (ex: Exception) {
-                    MaskMessage.reponseKo<Exception>(ex, messageOrigine, messageOrigine.entete.idReference)
-                }
-            )
-        }
-
+        stingerUtil.stockerResultatSurStinger(
+            messageOrigine,
+            this::getPdfSurcharge,
+            this::envoyerMessageRetour,
+            "application/pdf",
+            "toto"
+        )
     }
 
-    private suspend fun retour(message: MaskMessage) {
-
-        LOG.info("Reponse asynchrone = $message")
-        retourEmitter?.send(message)
+    fun getPdfSurcharge(maskMessage: MaskMessage): InputStream {
+        val demandeSurcharge = maskMessage.recupererObjetMetier<SurchargeDemande>()
+        return surchargeService.appliquerSurcharge(demandeSurcharge).toInputStream()
     }
 
+    fun envoyerMessageRetour(messageIn: MaskMessage) {
+
+        retourEmitter?.send(
+            try {
+                val fichierEnCache = messageIn.recupererObjetMetier<FichierStocke>()
+                val urlKbis = fichierEnCache.urlAcces
+                LOG.debug("Réception évènement Surcharge stocké : ${fichierEnCache.urlAccesNavigateur}")
+                MaskMessage.reponseOk(SurchargeReponse(urlKbis).toString(), messageIn, messageIn.entete.idReference)
+
+            } catch (ex: Exception) {
+                MaskMessage.reponseKo<Exception>(ex, messageIn, messageIn.entete.idReference)
+            }
+        )
+    }
 }

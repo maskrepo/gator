@@ -1,6 +1,7 @@
 val quarkusVersion: String = "1.8.0.Final"
-val maskModelVersion = "1.0.3-SNAPSHOT"
-val maskUtilVersion = "1.0.3-SNAPSHOT"
+val maskModelVersion = "1.1.2-SNAPSHOT"
+val maskUtilVersion = "1.1.0-SNAPSHOT"
+val stingerUtilVersion = "1.1.0-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -65,6 +66,7 @@ dependencies {
 
     implementation("fr.convergence.proddoc.lib:mask-util:$maskUtilVersion")
     implementation("fr.convergence.proddoc.lib:mask-model:$maskModelVersion")
+    implementation("fr.convergence.proddoc.lib:stinger-util:$stingerUtilVersion")
 
     testImplementation("io.quarkus:quarkus-junit5:$quarkusVersion")
     testImplementation("io.rest-assured:kotlin-extensions:4.3.0")

@@ -8,9 +8,9 @@ import fr.convergence.proddoc.model.ConfigurationFiligrane
 import fr.convergence.proddoc.model.ConfigurationPagination
 import fr.convergence.proddoc.model.SurchargeDemande
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
+import org.apache.commons.io.output.ByteArrayOutputStream
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.util.function.Consumer
 import javax.enterprise.context.ApplicationScoped
@@ -29,7 +29,10 @@ class AsposeSurchargeur(@Inject val asposeHelper: AsposeHelper) : Surchargeur {
             .use { inputStream -> license.setLicense(inputStream) }
     }
 
-    override fun appliquerSurcharge(fichierInputStream: InputStream, surchargeDemande: SurchargeDemande): ByteArrayOutputStream {
+    override fun appliquerSurcharge(
+        fichierInputStream: InputStream,
+        surchargeDemande: SurchargeDemande
+    ): ByteArrayOutputStream {
 
         val document = Document(fichierInputStream)
 

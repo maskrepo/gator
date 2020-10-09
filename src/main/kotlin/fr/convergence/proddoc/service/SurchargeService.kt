@@ -2,8 +2,8 @@ package fr.convergence.proddoc.service
 
 import fr.convergence.proddoc.model.SurchargeDemande
 import fr.convergence.proddoc.service.surchargeur.Surchargeur
+import org.apache.commons.io.output.ByteArrayOutputStream
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayOutputStream
 import java.net.URL
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
