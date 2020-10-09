@@ -1,7 +1,7 @@
 val quarkusVersion: String = "1.8.0.Final"
-val maskModelVersion = "1.1.2-SNAPSHOT"
-val maskUtilVersion = "1.1.0-SNAPSHOT"
-val stingerUtilVersion = "1.1.0-SNAPSHOT"
+val maskModelVersion = "1.1.3-SNAPSHOT"
+val maskUtilVersion = "1.1.1-SNAPSHOT"
+val stingerUtilVersion = "1.1.1-SNAPSHOT"
 
 plugins {
     kotlin("jvm") version "1.4.10"
@@ -58,7 +58,6 @@ dependencies {
     implementation("io.quarkus:quarkus-resteasy:$quarkusVersion")
 
     implementation("org.jboss.resteasy:resteasy-multipart-provider:4.5.6.Final")
-
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
 
@@ -94,5 +93,11 @@ tasks {
     }
     test {
         systemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager")
+    }
+}
+
+tasks.register("printVersion") {
+    doLast {
+        File(projectDir, "version.txt").appendText("${project.version}")
     }
 }

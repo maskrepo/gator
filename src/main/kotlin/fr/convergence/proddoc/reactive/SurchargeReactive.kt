@@ -1,4 +1,4 @@
-package fr.convergence.proddoc.kafka
+package fr.convergence.proddoc.reactive
 
 import fr.convergence.proddoc.model.SurchargeDemande
 import fr.convergence.proddoc.model.SurchargeReponse
@@ -9,7 +9,7 @@ import fr.convergence.proddoc.util.stinger.StingerUtil
 import org.eclipse.microprofile.reactive.messaging.Channel
 import org.eclipse.microprofile.reactive.messaging.Emitter
 import org.eclipse.microprofile.reactive.messaging.Incoming
-import org.slf4j.LoggerFactory
+import org.slf4j.LoggerFactory.getLogger
 import java.io.InputStream
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
@@ -25,7 +25,7 @@ class SurchargeReactive(
     val retourEmitter: Emitter<MaskMessage>? = null
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(SurchargeReactive::class.java)
+        private val LOG = getLogger(SurchargeReactive::class.java)
     }
 
     @Incoming("surcharge")
